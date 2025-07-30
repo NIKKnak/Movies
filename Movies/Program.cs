@@ -1,11 +1,14 @@
-﻿namespace Movies
+using System.Threading.Tasks;
+
+namespace MovieLibrary
 {
-    internal class Program
+    class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Logic logic = new Logic();
-            logic.Start();
+            await logic.Start();
         }
+
     }
 }
