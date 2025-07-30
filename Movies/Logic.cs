@@ -1,27 +1,25 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Movies
+namespace MovieLibrary
 {
     internal class Logic
     {
-        public void Start()
+        public async Task Start()
         {
             MovieRepository movieRepository = new MovieRepository();
 
-            #region Тестовые данные 
+            #region Тестовые данные
 
             Movie movie1 = new Movie(name: "Маска", acter: "Джим Керри", price: 100, age: 12, rating: 88);
             Movie movie2 = new Movie(name: "История игрушек", acter: "Игрушки", price: 150, age: 6, rating: 70);
             Movie movie3 = new Movie(name: "Коммандо", acter: "Арнольд Шварценеггер", price: 200, age: 18, rating: 76);
-            movieRepository.AddMovie(movie: movie1);
-            movieRepository.AddMovie(movie: movie2);
-            movieRepository.AddMovie(movie: movie3);
+            await movieRepository.AddMovie(movie: movie1);
+            await movieRepository.AddMovie(movie: movie2);
+            await movieRepository.AddMovie(movie: movie3);
 
-            #endregion Тестовые данные 
+            #endregion Тестовые данные
 
             while (true)
             {
@@ -41,15 +39,18 @@ namespace Movies
                                                 "Название, Актер, Цена, Возрастные ограничения, Рейтинг");
                         try
                         {
-                            string[] dataToCreate = SplitCurrentData();
+                            string[] dataToCreate = await SplitCurrentData();
 
                             Movie movie = new Movie(name: dataToCreate[0], acter: dataToCreate[1], price: dataToCreate[2], age: dataToCreate[3], rating: dataToCreate[4]);
-                            movieRepository.AddMovie(movie: movie);
+                            await movieRepository.AddMovie(movie: movie);
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            Console.WriteLine($"Произошла ошибка: {ex.Message}"); // заменить на пользовательский Exception
                         }
                         break;
+
+                    case ConsoleKey.D2:
                         try
                         {
                             Console.Clear();
@@ -76,7 +77,7 @@ namespace Movies
                             Console.Clear();
                             Console.WriteLine("Заполните информацию о фильме через пробел в порядке\n" +
                                 "Название, Актер, Цена, Возрастные ограничения, Рейтинг");
-                            string[] dataToUpdate = SplitCurrentData();
+                            string[] dataToUpdate = await SplitCurrentData();
                             movieRepository.UpdateMovie(
                                                         id: idNumber,
                                                         newName: dataToUpdate[0],
@@ -101,7 +102,7 @@ namespace Movies
                         if (case4Key == ConsoleKey.D1)
                         {
                             Console.Clear();
-                            List<Movie> newSort = movieRepository.SortAge();
+                            List<Movie> newSort = await movieRepository.SortAge();
                             foreach (var item in newSort)
                             {
                                 Console.WriteLine(item.ToString());
@@ -113,9 +114,9 @@ namespace Movies
             }
         }
 
-        private string[] SplitCurrentData()
+        private async Task<string[]> SplitCurrentData()
         {
-            string currentData = Console.ReadLine();
+            string currentData = await Task.Run(() => Console.ReadLine());
             string[] arrayData = currentData.Split(' ');
             if (arrayData.Length != 5)
             {
