@@ -1,34 +1,30 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Test;
 
-namespace Movies
+namespace MovieLibrary
 {
     class MovieRepository : ICrud
     {
         private List<Movie> _movies = new List<Movie>();
 
-        public List<Movie> SortAge()
+        public async Task<List<Movie>> SortAge()
         {
-            List<Movie> newList = (from i in _movies
-                                   orderby i.AgeVersion
-                                   select i).ToList();
-            return newList;
+            return await Task.Run(() => _movies.OrderBy(o => o.AgeVersion).ToList());
         }
 
         public List<Movie> SortPrice()
         {
-            List<Movie> newList = (from i in _movies
-                                   orderby i.PriceMovie
-                                   select i).ToList();
+            List<Movie> newList = _movies.OrderBy(o => o.PriceMovie).ToList();
+
             return newList;
         }
 
-        public void AddMovie(Movie movie)
+        public async Task AddMovie(Movie movie)
         {
-            _movies.Add(movie);
+            await Task.Run(() => _movies.Add(movie));
         }
 
         public void PrintAllMovies()
